@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WahaSud</title>
+<meta name="description" content="Plateforme de gestion intelligente de l'eau dans le sud du Maroc : énergie renouvelable, réservoirs, fuites et décisions.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#energie" aria-label="WahaSud">
+      <svg viewBox="0 0 28 28" aria-hidden="true"><path d="M14 2.5C14 2.5 5.5 12 5.5 17.5a8.5 8.5 0 0 0 17 0C22.5 12 14 2.5 14 2.5Z" fill="var(--accent)"/><path d="M8.6 18.2c1.6-1.5 3.1-1.5 4.7 0s3.1 1.5 4.7 0 2-.9 2.4-.5" fill="none" stroke="var(--surface)" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>WahaSud</span>
+    </a>
+    <nav class="tabs" data-i18n-attr="aria-label:nav_pages" aria-label="Pages">
+      <a class="tab" id="tab-energie" href="#energie" data-i18n="tab_energie">Énergie</a>
+      <a class="tab" id="tab-eau" href="#eau" data-i18n="tab_eau">Eau</a>
+      <a class="tab" id="tab-decisions" href="#decisions"><span data-i18n="tab_decisions">Décisions</span> <span class="badge" id="badge" hidden>0</span></a>
+      <a class="tab" id="tab-impact" href="#impact" data-i18n="tab_impact">Impact</a>
+    </nav>
+    <button type="button" class="btn lang" id="langBtn" lang="ar">العربية</button>
+    <span class="simtag" id="simTag">…</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="banner" id="banner" role="status">…</div>
+  <div class="ctl">
+    <span class="lab" id="scLab" data-i18n="sc_lab">Météo de l'énergie</span>
+    <div class="seg" role="group" aria-labelledby="scLab" id="scSeg">
+      <button type="button" data-sc="prevu" aria-pressed="true" data-i18n="sc_prevu">Prévue</button>
+      <button type="button" data-sc="faible" aria-pressed="false" data-i18n="sc_faible">Vent faible</button>
+      <button type="button" data-sc="surplus" aria-pressed="false" data-i18n="sc_surplus">Vent fort</button>
+    </div>
+    <span class="today" id="today"></span>
+  </div>
+
+  <!-- PAGE 1 : ÉNERGIE -->
+  <section class="page" id="p-energie">
+    <div class="page-head">
+      <h1 data-i18n="e_h1">L'énergie renouvelable suffit-elle pour pomper et dessaler ?</h1>
+      <p data-i18n="e_p">Production solaire et éolienne prévue, comparée à l'électricité nécessaire pour produire l'eau dont les villes du sud ont besoin.</p>
+    </div>
+    <div class="strip" id="eStrip"></div>
+    <div class="panel">
+      <div class="panel-head">
+        <h2 id="eChartTitle">…</h2>
+        <div class="seg" role="group" data-i18n-attr="aria-label:h_label" aria-label="Horizon de prévision" id="hSeg">
+          <button type="button" data-h="jour" aria-pressed="true" data-i18n="h_jour">Demain</button>
+          <button type="button" data-h="mois" aria-pressed="false" data-i18n="h_mois">30 jours</button>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--solar)"></i><span data-i18n="lg_solar">Solaire</span></span>
+        <span><i style="background:var(--wind)"></i><span data-i18n="lg_wind">Éolien</span></span>
+        <span><i class="ln"></i><span data-i18n="lg_need">Besoin pompage + dessalement</span></span>
+        <span id="eLegendX"></span>
+      </div>
+      <div class="chartbox" id="eChart"></div>
+      <p class="read" id="eRead"></p>
+      <p class="hint" id="eSource"></p>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2 data-i18n="pl_title">Et si on ajoutait de la puissance ?</h2></div>
+      <div class="sim-row">
+        <label for="plSite" class="hint" style="margin:0" data-i18n="pl_site">Site</label>
+        <select id="plSite"></select>
+        <label for="plMw" class="hint" style="margin:0" data-i18n="pl_add">Puissance ajoutée (MW)</label>
+        <input type="number" id="plMw" value="10" min="1" max="500" step="1" inputmode="numeric">
+        <button type="button" class="btn primary" id="plBtn" data-i18n="pl_btn">Comparer</button>
+      </div>
+      <p class="hint" data-i18n="pl_hint">Compare demain et les 30 prochains jours avec et sans cette puissance, pour la météo choisie en haut de page. Le résultat est le plus parlant avec « Vent faible ».</p>
+      <div class="tablewrap" id="plOut" aria-live="polite"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2 data-i18n="s_title">Sites de production, demain</h2></div>
+      <div class="tablewrap"><table>
+        <thead><tr><th data-i18n="s_site">Site</th><th data-i18n="s_type">Type</th><th class="r" data-i18n="s_power">Puissance</th><th class="r" data-i18n="s_prod">Production</th><th class="r" data-i18n="s_load">Facteur de charge</th></tr></thead>
+        <tbody id="eSites"></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- PAGE 2 : EAU -->
+  <section class="page" id="p-eau" hidden>
+    <div class="page-head">
+      <h1 data-i18n="w_h1">Où l'eau manque, où elle fuit, où l'on peut arrêter</h1>
+      <p data-i18n="w_p">Niveau des réservoirs par ville, détection de fuites par le débit de nuit, et répartition de la production de demain selon le score de besoin.</p>
+    </div>
+    <div class="strip" id="wStrip"></div>
+    <div class="panel">
+      <div class="panel-head"><h2 data-i18n="map_title">Carte du sud</h2><span class="hint" style="margin:0" data-i18n="map_note">schéma simplifié de la côte</span></div>
+      <div class="mapwrap"><div class="mapbox" id="map"></div><div class="maplist" id="mapKey"></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2 data-i18n="al_title">Répartition de la production demain</h2></div>
+      <div id="wAlloc"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2 data-i18n="lk_title">Tester une fuite</h2></div>
+      <div class="sim-row">
+        <label for="leakCity" class="hint" style="margin:0" data-i18n="lk_tank">Réservoir</label>
+        <select id="leakCity"></select>
+        <button type="button" class="btn primary" id="leakBtn">…</button>
+      </div>
+      <p class="hint" data-i18n="lk_hint">Ajoute une perte égale à 15 % de la demande de la ville choisie. Le détecteur la repère dans le débit de nuit, puis la répartition et les décisions se recalculent.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-head"><h2 data-i18n="sn_title">Capteurs en direct</h2><span class="hint" style="margin:0" data-i18n="sn_auto">mise à jour automatique toutes les 60 s</span></div>
+      <div class="tablewrap"><table>
+        <thead><tr><th data-i18n="sn_city">Ville</th><th data-i18n="sn_src">Source du débit</th><th class="r" data-i18n="sn_n">Relevés (24 h)</th><th class="r" data-i18n="sn_last">Dernier relevé</th><th class="r" data-i18n="sn_lvl">Niveau mesuré</th></tr></thead>
+        <tbody id="wSensors"></tbody>
+      </table></div>
+      <p class="hint" data-i18n-html="sn_hint">Un capteur remplace la simulation d'une ville dès qu'il a envoyé 24 relevés horaires consécutifs : la détection de fuite et la répartition utilisent alors les mesures réelles. Envoi par <code>POST /api/readings</code>, voir le README.</p>
+    </div>
+    <div class="cities" id="wCities"></div>
+  </section>
+
+  <!-- PAGE 3 : DÉCISIONS -->
+  <section class="page" id="p-decisions" hidden>
+    <div class="page-head">
+      <h1 data-i18n="d_h1">Décisions recommandées</h1>
+      <p data-i18n="d_p">Chaque recommandation croise les prévisions d'énergie et l'état des réservoirs. Elle indique les données qui la justifient et son effet attendu.</p>
+    </div>
+    <div class="strip" id="dStrip"></div>
+    <div class="panel-head" style="margin-bottom:10px">
+      <h2 style="font-size:18px;font-weight:600" data-i18n="d_todo">À traiter</h2>
+      <button type="button" class="btn" id="copyBtn" data-i18n="d_copy">Copier la synthèse</button>
+    </div>
+    <div id="copyOut"></div>
+    <div class="recs" id="dRecs"></div>
+    <div class="panel" style="margin-top:20px">
+      <div class="panel-head"><h2 data-i18n="j_title">Journal des décisions</h2><span class="hint" style="margin:0" data-i18n="j_note">enregistré dans la base de données</span></div>
+      <div class="tablewrap"><table>
+        <thead><tr><th data-i18n="j_date">Date et heure</th><th data-i18n="j_dec">Décision</th><th data-i18n="j_status">Statut</th></tr></thead>
+        <tbody id="dLog"></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- PAGE 4 : IMPACT -->
+  <section class="page" id="p-impact" hidden>
+    <div class="page-head">
+      <h1 data-i18n="i_h1">Ce que valent ces décisions</h1>
+      <p data-i18n="i_p">Dirhams économisés, CO₂ évité et eau récupérée grâce à l'énergie renouvelable, à la réparation des fuites et à l'arrêt du pompage vers les réservoirs pleins. Chiffres par jour, avec les hypothèses indiquées en bas de page.</p>
+    </div>
+    <div class="strip" id="iStrip"></div>
+    <div class="panel">
+      <div class="panel-head"><h2 data-i18n="i_detail">Détail par source</h2></div>
+      <div class="tablewrap"><table>
+        <thead><tr><th data-i18n="i_src">Source</th><th class="r" data-i18n="i_water">Eau</th><th class="r" data-i18n="i_energy">Énergie</th><th class="r" data-i18n="i_mad">Valeur par jour</th><th class="r" data-i18n="i_co2">CO₂ évité par jour</th></tr></thead>
+        <tbody id="iRows"></tbody>
+      </table></div>
+      <p class="hint" id="iAsm"></p>
+    </div>
+  </section>
+
+  <details class="method">
+    <summary data-i18n="m_title">Hypothèses du modèle</summary>
+    <ul id="methodList"></ul>
+  </details>
+</main>
+
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
