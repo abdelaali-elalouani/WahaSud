@@ -1,0 +1,18 @@
+# runtime data (SQLite database and its journal files)
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# secrets and local config
+.env
+*.key
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
